@@ -1,0 +1,90 @@
+﻿@page
+@model Checkout.Pages.InfoModel
+@{
+    ViewData["Title"] = "Info";
+}
+
+@if (Request.Method == "GET")
+{
+    <form method="get">
+        <label for="movieTitle">Movie Title:</label>
+        <input type="text" id="movieTitle" name="movieTitle" />
+
+        <button type="submit">Search</button>
+    </form>
+}
+
+@if (Request.Method == "GET" && Model.IMDbResponse != null)
+{
+    @if (Model.IMDbResponse.Results != null)
+    {
+        @if (Model.IMDbResponse.Results.Count > 0)
+        {
+            <ul>
+                @foreach (var result in Model.IMDbResponse.Results)
+                {
+                    @if (result.Image != null)
+                    {
+                        <li class="photo-container" style="background-image: url('@result.Image.Url');"></li>
+                     }
+                    <li>
+                        <h2>Title: @result.Title</h2>
+                        <p>Year: @result.Year</p>
+                        @if (result.TitleType == "movie")
+                        {
+                            <p>Type: Movie</p>
+                            <h3>Principals:</h3>
+                            @if (result.Principals != null && result.Principals.Count > 0)
+                            {
+                                <ul>
+                                    @foreach (var principal in result.Principals)
+                                    {
+                                        <li>
+                                            <p>Name: @principal.Name</p>
+                                            <p>Category: @principal.Category</p>
+                                            @if (principal.Characters != null && principal.Characters.Count > 0)
+                                            {
+                                                <p>Characters: @string.Join(", ", principal.Characters)</p>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        }
+                        else if (result.TitleType == "tvSeries")
+                        {
+                            <p>Type: TV Series</p>
+                            <p>Year: @result.Year</p>
+                            <h3>Principals:</h3>
+                            @if (result.Principals != null && result.Principals.Count > 0)
+                            {
+                                <ul>
+                                    @foreach (var principal in result.Principals)
+                                    {
+                                        <li>
+                                            <p>Name: @principal.Name</p>
+                                            <p>Category: @principal.Category</p>
+                                            @if (principal.Characters != null && principal.Characters.Count > 0)
+                                            {
+                                                <p>Characters: @string.Join(", ", principal.Characters)</p>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        }    
+                    </li>
+                }
+            </ul>
+        }
+
+    }
+    else
+    {
+        <p>No results found.</p>
+    }
+}
+else if (Request.Method == "GET")
+{
+    <p>No results found.</p>
+}
