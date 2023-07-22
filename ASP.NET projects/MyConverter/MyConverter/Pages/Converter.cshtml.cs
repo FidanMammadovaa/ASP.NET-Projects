@@ -61,6 +61,7 @@ namespace MyConverter.Pages
         }
         private double ConvertCurrency(double value, string fromCurrency, string toCurrency)
         {
+            string fromCurrencyValue = String.Empty;
             string toCurrencyValue = String.Empty;
             if (fromCurrency != toCurrency)
             {
@@ -71,14 +72,32 @@ namespace MyConverter.Pages
                         if (Response.ValTypes[i].Valutes[j].Code == toCurrency)
                         {
                             toCurrencyValue = Response.ValTypes[i].Valutes[j].Value;
-                            break;
+                        }
+                        if (Response.ValTypes[i].Valutes[j].Code == fromCurrency)
+                        {
+                            fromCurrencyValue = Response.ValTypes[i].Valutes[j].Value;
                         }
                     }
                 }
-                double result;
-                Double.TryParse(toCurrencyValue, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
 
-                return result * value;
+
+                double toCurrencyResult;
+                double fromCurrencyResult;
+                Double.TryParse(toCurrencyValue, NumberStyles.Float, CultureInfo.InvariantCulture, out toCurrencyResult);
+                Double.TryParse(fromCurrencyValue, NumberStyles.Float, CultureInfo.InvariantCulture, out fromCurrencyResult);
+
+                if (toCurrencyResult > fromCurrencyResult)
+                {
+                    return value / toCurrencyResult;
+                }
+                else if (toCurrencyResult < fromCurrencyResult)
+                {
+                    return value * toCurrencyResult;
+                }
+                else if (toCurrencyResult == fromCurrencyResult)
+                {
+                    return value;
+                }
             }
             return value;
 
